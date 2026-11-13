@@ -1,0 +1,2 @@
+/* ID, título, enunciado, firma (def solve(...)), restricciones y ejemplos de entrada/salida. Incluye 
+también el tipo de la petición de envío (SubmitRequest) y su respuesta con el jobId (SubmitResponse).*/

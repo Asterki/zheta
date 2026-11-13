@@ -1,0 +1,2 @@
+/* Estado general, jobId copiable, etapas con su propio indicador y las insignias de pruebas. Muestra por 
+separado “análisis incompleto” y “solución incorrecta”, y la lista expandible de casos de prueba.*/

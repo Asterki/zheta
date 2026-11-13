@@ -1,0 +1,1 @@
+/* Lista de estados terminales, textos en español para cada estado y colores de cada tipo de procedencia.*/

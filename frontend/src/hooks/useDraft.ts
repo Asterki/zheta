@@ -1,0 +1,1 @@
+/* Guarda y recupera el código del editor por problema, para que no se pierda si falla el envío (F01).*/

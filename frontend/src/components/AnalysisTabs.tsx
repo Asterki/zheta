@@ -1,0 +1,1 @@
+/* Contenedor con las pestañas Bloques, Gráficas, Reporte y Asistente IA.*/

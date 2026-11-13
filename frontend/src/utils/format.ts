@@ -1,0 +1,1 @@
+/* Convierte y muestra unidades (ns, ms, KiB) y redondea números. F03 pide unidades en toda métrica. */

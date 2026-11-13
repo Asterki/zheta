@@ -1,0 +1,2 @@
+/* Tiempo y memoria contra n con Recharts. Puntos medidos sólidos, predicciones punteadas, curvas candidatas 
+con interruptores, puntos reservados con otro símbolo y mensaje explícito de “ajuste inconcluso”.*/
