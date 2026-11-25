@@ -1,0 +1,10 @@
+packages:
+  - backend
+  - frontend
+  - shared
+
+catalog:
+  zod: 4.6.7
+
+allowBuilds:
+  esbuild: true
