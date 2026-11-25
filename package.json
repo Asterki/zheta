@@ -6,7 +6,12 @@
     "dev:backend": "pnpm --filter @zheta/backend dev",
     "dev:frontend": "pnpm --filter zheta-frontend dev",
     "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:export": "mkdir -p dist/images && docker save zheta-backend:latest zheta-frontend:latest | gzip > dist/images/zheta-images.tar.gz"
   },
   "packageManager": "pnpm@12.2.0"
 }

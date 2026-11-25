@@ -19,6 +19,10 @@ pnpm dev:backend
 pnpm dev:frontend
 pnpm typecheck
 pnpm build
+pnpm docker:build
+pnpm docker:up
+pnpm docker:down
+pnpm docker:export
 ```
 
 Package-specific commands:
@@ -52,6 +56,10 @@ shared/src/
   api/            # request/response contracts and response helpers
 
 frontend/src/     # React application
+
+docker/           # Dockerfiles, nginx config, Piston bootstrap
+litellm/          # editable LiteLLM proxy config
+docker-compose.yml
 ```
 
 ### Request flow
@@ -178,6 +186,22 @@ custom(status, data)   // custom status value
 - Tool configuration files keep their required names (`tsup.config.ts`, `vite.config.ts`, `eslint.config.js`).
 - Template files use the `.template.ts` suffix because they are not part of the build.
 - API paths use kebab-case; use plural nouns for resource collections.
+
+## Docker and integrations
+
+- `docker-compose.yml` is the source of truth for the local integrated stack.
+- Docker builds use the repository root as context because they need the pnpm workspace and `shared`.
+- Backend image: `docker/backend.Dockerfile`, multi-stage, built with `tsup`, production dependencies installed with `pnpm deploy`.
+- Frontend image: `docker/frontend.Dockerfile`, built with Vite and served by Nginx.
+- Nginx proxies `/api/*` to the backend service; keep that route when changing frontend hosting.
+- Images are tagged `zheta-backend:latest` and `zheta-frontend:latest`. Export them with `pnpm docker:export`; output goes to `dist/images/`.
+- Compose ports and provider keys come from the root `.env`. Keep `.env.example` updated.
+- `litellm/config.yaml` is the editable model registry. Add models under `model_list`; never commit provider keys there. Use `os.environ/VAR` references and pass values through compose.
+- LiteLLM is exposed at `http://localhost:4000` and uses the OpenAI-compatible `/v1` API. Do not hardcode a different gateway URL in the backend; use `LITELLM_URL`.
+- Piston runs privileged because it sandboxes code with namespaces and cgroups. Do not remove `privileged: true` without replacing its isolation mechanism.
+- Piston packages are installed into the `piston_packages` volume. Extend `PISTON_PACKAGES` in `.env` instead of installing packages manually inside the container.
+- Backend integration URLs (`PISTON_URL`, `LITELLM_URL`, `LITELLM_MASTER_KEY`) are validated in `backend/src/config/env.ts`. Add new integration variables there and to `backend/.env.example`.
+- Never bake `.env` files or secrets into images. `.dockerignore` excludes environment files and workspace build output.
 
 ## Other constraints
 

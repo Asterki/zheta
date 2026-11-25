@@ -1,0 +1,49 @@
+# LiteLLM proxy configuration.
+#
+# This file is mounted read-only into the LiteLLM container. Edit it on the host
+# and restart the service to apply changes:
+#
+#   docker compose restart litellm
+#
+# Add as many models as needed under `model_list`. Each entry exposes a stable
+# `model_name` to clients, while `litellm_params.model` selects the provider and
+# upstream model. API keys are read from environment variables in the root
+# `.env` file; never put real secrets in this file.
+
+model_list:
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: gpt-4.1-mini
+    litellm_params:
+      model: openai/gpt-4.1-mini
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: claude-sonnet
+    litellm_params:
+      model: anthropic/claude-sonnet-4-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+  - model_name: deepseek-chat
+    litellm_params:
+      model: deepseek/deepseek-chat
+      api_key: os.environ/DEEPSEEK_API_KEY
+
+  # Local Ollama example (start Ollama on the host and uncomment):
+  # - model_name: local-qwen
+  #   litellm_params:
+  #     model: ollama/qwen2.5-coder:7b
+  #     api_base: http://host.docker.internal:11434
+
+litellm_settings:
+  drop_params: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY

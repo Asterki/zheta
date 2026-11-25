@@ -1,0 +1,100 @@
+name: zheta
+
+services:
+  backend:
+    image: zheta-backend:latest
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:8080}
+      PISTON_URL: http://piston:2000
+      LITELLM_URL: http://litellm:4000
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-zheta-local}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    depends_on:
+      litellm:
+        condition: service_started
+      piston:
+        condition: service_started
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  frontend:
+    image: zheta-frontend:latest
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  litellm:
+    image: docker.litellm.ai/berriai/litellm:latest
+    restart: unless-stopped
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    ports:
+      - "${LITELLM_PORT:-4000}:4000"
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml:ro
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-zheta-local}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+
+  piston:
+    image: ghcr.io/engineer-man/piston:latest
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - "${PISTON_PORT:-2000}:2000"
+    volumes:
+      - piston_packages:/piston/packages
+    tmpfs:
+      - /tmp:exec
+
+  # One-shot service that installs runtimes into the Piston volume.
+  # Override the list with PISTON_PACKAGES="python node typescript gcc java".
+  piston-bootstrap:
+    image: curlimages/curl:8.12.1
+    restart: "no"
+    depends_on:
+      piston:
+        condition: service_started
+    environment:
+      PISTON_URL: http://piston:2000
+      PISTON_PACKAGES: "${PISTON_PACKAGES:-python node typescript}"
+    volumes:
+      - ./docker/piston:/scripts:ro
+    entrypoint: ["/bin/sh", "/scripts/bootstrap.sh"]
+
+volumes:
+  piston_packages:
