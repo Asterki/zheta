@@ -1,22 +1,12 @@
-import type { NextFunction, Request, Response } from "express";
-import { healthQuerySchema, success, type HealthResponse } from "@shared";
+import type { RequestHandler } from "express";
+import { success, type HealthQuery, type HealthResponse } from "@shared";
 
 import { getHealthStatus } from "../../services/health/service";
-import { HttpError } from "../../utils/httpError";
+import { getValidatedQuery } from "../../utils/validatedInput";
 
-export const healthCheck = (
-  req: Request,
-  res: Response<HealthResponse>,
-  next: NextFunction,
-): void => {
-  const parsedQuery = healthQuerySchema.safeParse(req.query);
-
-  if (!parsedQuery.success) {
-    next(new HttpError(400, "Invalid query parameters", parsedQuery.error.issues));
-    return;
-  }
-
-  const data = getHealthStatus(parsedQuery.data);
+export const healthCheck: RequestHandler<Record<string, string>, HealthResponse> = (req, res) => {
+  const query = getValidatedQuery<HealthQuery>(req);
+  const data = getHealthStatus(query);
 
   res.status(200).json(success(data));
 };

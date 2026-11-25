@@ -6,13 +6,19 @@
  *
  *   apiRouter.use("/<category>", categoryRouter);
  *
- * Routes only wire HTTP methods and paths to controllers.
+ * Routes only wire HTTP methods, validation middleware, and controllers.
+ * Validation MUST be declared here, before the controller.
  */
 
 import { Router } from "express";
+import { categoryQuerySchema } from "@shared";
 
 import { getCategoryController } from "../controllers/category/categoryController";
+import { validateQuery } from "../middleware/validateMiddleware";
 
 export const categoryRouter = Router();
 
-categoryRouter.get("/", getCategoryController);
+categoryRouter.get("/", validateQuery(categoryQuerySchema), getCategoryController);
+
+// For a validated body:
+// categoryRouter.post("/", validateBody(categoryBodySchema), createCategoryController);

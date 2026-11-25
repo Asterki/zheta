@@ -65,11 +65,11 @@ docker-compose.yml
 ### Request flow
 
 ```
-route -> middleware -> controller -> service -> (other services / data access)
+route (validation middleware) -> controller -> service -> (other services / data access)
 ```
 
-- Routes only wire methods, paths, and middleware to controllers.
-- Controllers are thin: validate input, call services, return a shared response.
+- Routes only wire methods, paths, validation middleware, and controllers.
+- Controllers are thin: consume validated input, call services, return a shared response.
 - Services contain business logic and never receive or return Express `Request`/`Response` objects.
 - Middleware handles cross-cutting concerns and forwards errors.
 - `config/env.ts` validates environment variables at startup.
@@ -169,7 +169,16 @@ custom(status, data)   // custom status value
   ```
 
 - Export new schemas/types from the relevant `index.ts` barrels.
-- Validate all external input (body, query, params) with the shared schemas before using it. Do not trust `req.body`, `req.query`, or `req.params`.
+- Validate all external input (body, query, params) with the shared schemas. Validation happens in the route definition, not in the controller.
+- Use `validateBody(schema)`, `validateQuery(schema)`, or `validateParams(schema)` from `middleware/validateMiddleware.ts` before the controller:
+
+  ```ts
+  healthRouter.get("/", validateQuery(healthQuerySchema), healthCheck);
+  ```
+
+- Controllers read the parsed values through `getValidatedBody<T>(req)`, `getValidatedQuery<T>(req)`, or `getValidatedParams<T>(req)` from `utils/validatedInput.ts`.
+- Validation failures are forwarded as `HttpError` to the central error middleware; controllers do not need `safeParse` or validation `try/catch`.
+- Do not trust raw `req.body`, `req.query`, or `req.params` unless the route has the matching validation middleware.
 - Use `HttpError` (or `next(error)`) for expected HTTP failures. Express 5 forwards rejected promises to the error middleware automatically.
 
 ## Naming convention (Airbnb-based)
