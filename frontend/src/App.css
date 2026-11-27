@@ -1,0 +1,236 @@
+/* Ruta: frontend/src/App.css */
+/* Estilos base para acercar F01 a la estructura visual de tres columnas + panel inferior. */
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #111317;
+  color: #e6edf3;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.zheta-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #111317;
+}
+
+/* Barra superior */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  background-color: #181b20;
+  border-bottom: 1px solid #262b33;
+}
+
+.top-bar__brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.top-bar__logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f3f6fa;
+  letter-spacing: 0.2px;
+}
+
+.top-bar__selector {
+  flex: 1;
+  max-width: 540px;
+}
+
+.top-bar__select {
+  width: 100%;
+}
+
+.top-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.top-bar__job-id {
+  font-size: 12px;
+  color: #8b949e;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Estados de carga y error en App */
+.zheta-app__loading,
+.zheta-app__error {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* Área de trabajo principal */
+.zheta-app__workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 16px 18px;
+}
+
+.zheta-app__three-columns {
+  display: grid;
+  grid-template-columns: minmax(250px, 28%) minmax(420px, 1fr) minmax(240px, 26%);
+  gap: 14px;
+  min-height: 440px;
+}
+
+.zheta-app__col {
+  background-color: #16191e;
+  border: 1px solid #262b33;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Columna izquierda: Enunciado */
+.problem-statement {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.problem-statement--empty {
+  padding: 24px;
+}
+
+.problem-statement__title.ant-typography {
+  margin-top: 0;
+  margin-bottom: 14px;
+  color: #f3f6fa;
+}
+
+.problem-statement__section {
+  margin-bottom: 16px;
+}
+
+.problem-statement__section:last-child {
+  margin-bottom: 0;
+}
+
+.problem-statement__label {
+  display: block;
+  margin-bottom: 6px;
+  color: #c9d1d9;
+}
+
+.problem-statement__text.ant-typography {
+  margin-bottom: 0;
+  color: #d0d7de;
+}
+
+.problem-statement__signature {
+  background-color: #101216;
+  border: 1px solid #262b33;
+  border-radius: 8px;
+  padding: 10px 12px;
+  overflow-x: auto;
+}
+
+.problem-statement__restrictions {
+  margin: 0;
+  padding-left: 18px;
+  color: #d0d7de;
+}
+
+.problem-statement__restriction-item {
+  margin-bottom: 4px;
+}
+
+.problem-statement__examples {
+  width: 100%;
+}
+
+.problem-statement__example {
+  background-color: #101216;
+  border: 1px solid #262b33;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.problem-statement__code-block {
+  margin: 4px 0 8px;
+  padding: 8px 10px;
+  background-color: #16191e;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 12px;
+}
+
+.problem-statement__explanation.ant-typography {
+  margin-bottom: 0;
+  font-size: 12px;
+}
+
+/* Columna central: Editor de código */
+.code-editor-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+}
+
+.code-editor-panel--empty {
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.code-editor-panel__editor-wrapper {
+  flex: 1;
+  min-height: 360px;
+}
+
+.code-editor-panel__errors {
+  padding: 10px 12px;
+  background-color: #16191e;
+  border-top: 1px solid #262b33;
+}
+
+.code-editor-panel__error-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+/* Marcador de posición panel inferior (F03 / F04) */
+.zheta-app__bottom-panel {
+  min-height: 110px;
+  background-color: #16191e;
+  border: 1px solid #262b33;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+@media (max-width: 1024px) {
+  .zheta-app__three-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .code-editor-panel {
+    min-height: 340px;
+  }
+}
